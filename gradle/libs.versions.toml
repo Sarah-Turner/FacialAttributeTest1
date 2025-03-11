@@ -9,6 +9,9 @@ activity = "1.10.1"
 constraintlayout = "2.2.1"
 litert = "1.1.2"
 litertSupportApi = "1.1.2"
+renderscriptIntrinsicsReplacementToolkit = "b6363490c3"
+tensorflowCorePlatform = "0.3.3"
+tensorflowCorePlatformVersion = "0.5.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -20,6 +23,9 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 litert = { group = "com.google.ai.edge.litert", name = "litert", version.ref = "litert" }
 litert-support-api = { group = "com.google.ai.edge.litert", name = "litert-support-api", version.ref = "litertSupportApi" }
+renderscript-intrinsics-replacement-toolkit = { module = "com.github.android:renderscript-intrinsics-replacement-toolkit", version.ref = "renderscriptIntrinsicsReplacementToolkit" }
+tensorflow-core-platform = { module = "org.tensorflow:tensorflow-core-platform", version.ref = "tensorflowCorePlatform" }
+tensorflow-core-platform-v050 = { module = "org.tensorflow:tensorflow-core-platform", version.ref = "tensorflowCorePlatformVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

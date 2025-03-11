@@ -28,8 +28,14 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FaceAttributeModel model = new FaceAttributeModel(this);
+        FaceAttributeModel model = null;
+        try {
+            model = new FaceAttributeModel(this);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         button = (Button)findViewById(R.id.button);
+        FaceAttributeModel finalModel = model;
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -37,10 +43,18 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("BUTTONS", "User tapped the button");
                 try {
 
-                    model.setUpInterpreter(model.loadModelFile());
+                    finalModel.runInterpreter();
+                    finalModel.computeEyeCloseness();
+                    finalModel.computeSunglasses();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                Log.d("RESULTS", "EyeClosenessProbL = " + Double.toString(finalModel.getEyeClosenessProbL()));
+                Log.d("RESULTS", "EyeClosenessProbR = " + Double.toString(finalModel.getEyeClosenessProbR()));
+                Log.d("RESULTS", "SunglassesProb = " + Double.toString(finalModel.getSunglassesProb()));
+                Log.d("RESULTS", "EyeClosenessL = " + Boolean.toString(finalModel.getEyeClosenessL()));
+                Log.d("RESULTS", "EyeClosenessR = " + Boolean.toString(finalModel.getEyeClosenessR()));
+                Log.d("RESULTS", "Sunglasses = " + Boolean.toString(finalModel.getSunglasses()));
             }
         });
     }
