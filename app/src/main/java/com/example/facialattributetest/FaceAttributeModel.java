@@ -39,12 +39,16 @@ public class FaceAttributeModel {
     private Context context;
     private MappedByteBuffer tfliteFile;
     private Map<Integer, Object> rawOutputs;
+    private FloatBuffer originalLivenessEmbedding;
+    private FloatBuffer currentLivenessEmbedding;
     public double probEyeClosenessL;
     public double probEyeClosenessR;
     public double probSunglasses;
     public boolean eyeClosenessL;
     public boolean eyeClosenessR;
     public boolean sunglasses;
+    public double livenessLoss;
+    public boolean liveness;
 
 
 
@@ -235,7 +239,25 @@ public class FaceAttributeModel {
         Map<Integer, Object> outputs = this.setUpOutputBuffers();
         i.runForMultipleInputsOutputs(inputs, outputs);
         this.rawOutputs = outputs;
+        this.setOriginalEmbedding(); // liveness embeddings
+        this.setCurrentEmbedding();
         i.close();
+    }
+
+    // Set original embedding for liveness
+    private void setOriginalEmbedding()
+    {
+        Object sunglassesResults = this.rawOutputs.get(1);
+        FloatBuffer buffer = (FloatBuffer) sunglassesResults;
+        this.originalLivenessEmbedding = buffer;
+    }
+
+    // Set current embedding for liveness
+    private void setCurrentEmbedding()
+    {
+        Object sunglassesResults = this.rawOutputs.get(1);
+        FloatBuffer buffer = (FloatBuffer) sunglassesResults;
+        this.currentLivenessEmbedding = buffer;
     }
 
     // Calculate softmax for a given element in a FloatBuffer
@@ -256,6 +278,34 @@ public class FaceAttributeModel {
 
         result = Math.exp(input) / total; // softmax formula for single element
         return result;
+    }
+
+    // L2 loss function for liveness
+    // L2 = sum((y_true - y_pred)^2) where y = element from embedding
+    // Loss closer to 0 means the liveness check passes
+    private double L2LossFunc()
+    {
+        double loss = 0.0;
+
+        FloatBuffer original = this.originalLivenessEmbedding;
+        FloatBuffer current = this.currentLivenessEmbedding;
+
+        original.flip(); // Set pos to 0
+        current.flip();  // Set pos to 0
+
+        // For each element of both embeddings
+        while (original.hasRemaining())
+        {
+            // Find their difference squared
+            double y_true = original.get();
+            double y_pred = current.get();
+            double diff = y_true - y_pred;
+            double square = Math.pow(diff, 2);
+            // add to final result
+            loss += square;
+        }
+
+        return loss;
     }
 
     // Preprocess image, resize turn into bitmap then bytebuffer
@@ -300,6 +350,13 @@ public class FaceAttributeModel {
 
     // Postprocessing computations
 
+    // Compute liveness
+    public void computeLiveness()
+    {
+        this.computeLivenessLoss();
+        this.computeLivenessBoolean();
+    }
+
     // Compute eyeCloseness
     public void computeEyeCloseness()
     {
@@ -333,6 +390,14 @@ public class FaceAttributeModel {
         FloatBuffer buffer = (FloatBuffer) sunglassesResults;
         this.probSunglasses = buffer.get(0); // Probability sunglasses true
     }
+
+    // Compute liveness loss
+    private void computeLivenessLoss()
+    {
+        double loss = this.L2LossFunc();
+        this.livenessLoss = loss;
+    }
+
     // Compute eyecloseness booleans
     private void computeEyeClosenessBoolean()
     {
@@ -367,6 +432,20 @@ public class FaceAttributeModel {
         }
     }
 
+    // Compute liveness boolean
+    private void computeLivenessBoolean()
+    {
+        // If loss is close to 0
+        if (this.getLivenessLoss() < 10.0)
+        {
+            this.liveness = true;
+        }
+        else
+        {
+            this.liveness = false;
+        }
+    }
+
     // Accessors
 
     // Get eyeClosenessProbL
@@ -387,6 +466,12 @@ public class FaceAttributeModel {
         return this.probSunglasses;
     }
 
+    // Get liveness loss
+    public double getLivenessLoss()
+    {
+        return this.livenessLoss;
+    }
+
     // Get eyeClosenessL boolean
     public boolean getEyeClosenessL()
     {
@@ -404,6 +489,14 @@ public class FaceAttributeModel {
     {
         return this.sunglasses;
     }
+
+    // Get liveness boolean
+    public Boolean getLiveness()
+    {
+        return this.liveness;
+    }
+
+
 
 
 

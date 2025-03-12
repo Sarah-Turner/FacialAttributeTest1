@@ -46,15 +46,18 @@ public class MainActivity extends AppCompatActivity {
                     finalModel.runInterpreter();
                     finalModel.computeEyeCloseness();
                     finalModel.computeSunglasses();
+                    finalModel.computeLiveness();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
                 Log.d("RESULTS", "EyeClosenessProbL = " + Double.toString(finalModel.getEyeClosenessProbL()));
                 Log.d("RESULTS", "EyeClosenessProbR = " + Double.toString(finalModel.getEyeClosenessProbR()));
                 Log.d("RESULTS", "SunglassesProb = " + Double.toString(finalModel.getSunglassesProb()));
+                Log.d("RESULTS", "Liveness loss = " + Double.toString(finalModel.getLivenessLoss()));
                 Log.d("RESULTS", "EyeClosenessL = " + Boolean.toString(finalModel.getEyeClosenessL()));
                 Log.d("RESULTS", "EyeClosenessR = " + Boolean.toString(finalModel.getEyeClosenessR()));
                 Log.d("RESULTS", "Sunglasses = " + Boolean.toString(finalModel.getSunglasses()));
+                Log.d("RESULTS", "Liveness = " + Boolean.toString(finalModel.getLiveness()));
             }
         });
     }
