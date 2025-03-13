@@ -28,14 +28,18 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FaceAttributeModel model = null;
+        FaceAttributeModel model1 = null;
+        MediaPipeFaceDetectionModel model2 = null;
         try {
-            model = new FaceAttributeModel(this);
+            model1 = new FaceAttributeModel(this);
+            model2 = new MediaPipeFaceDetectionModel(this);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         button = (Button)findViewById(R.id.button);
-        FaceAttributeModel finalModel = model;
+        FaceAttributeModel finalFacialAttributeModel = model1;
+        MediaPipeFaceDetectionModel finalMediaPipeDetectionModel = model2;
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -43,21 +47,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("BUTTONS", "User tapped the button");
                 try {
 
-                    finalModel.runInterpreter();
-                    finalModel.computeEyeCloseness();
-                    finalModel.computeSunglasses();
-                    finalModel.computeLiveness();
+                    //finalFacialAttributeModel.runInterpreter();
+//                    finalFacialAttributeModel.computeEyeCloseness();
+//                    finalFacialAttributeModel.computeSunglasses();
+//                    finalFacialAttributeModel.computeLiveness();
+                    finalMediaPipeDetectionModel.runInterpreter();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d("RESULTS", "EyeClosenessProbL = " + Double.toString(finalModel.getEyeClosenessProbL()));
-                Log.d("RESULTS", "EyeClosenessProbR = " + Double.toString(finalModel.getEyeClosenessProbR()));
-                Log.d("RESULTS", "SunglassesProb = " + Double.toString(finalModel.getSunglassesProb()));
-                Log.d("RESULTS", "Liveness loss = " + Double.toString(finalModel.getLivenessLoss()));
-                Log.d("RESULTS", "EyeClosenessL = " + Boolean.toString(finalModel.getEyeClosenessL()));
-                Log.d("RESULTS", "EyeClosenessR = " + Boolean.toString(finalModel.getEyeClosenessR()));
-                Log.d("RESULTS", "Sunglasses = " + Boolean.toString(finalModel.getSunglasses()));
-                Log.d("RESULTS", "Liveness = " + Boolean.toString(finalModel.getLiveness()));
+//                Log.d("RESULTS", "EyeClosenessProbL = " + Double.toString(finalFacialAttributeModel.getEyeClosenessProbL()));
+//                Log.d("RESULTS", "EyeClosenessProbR = " + Double.toString(finalFacialAttributeModel.getEyeClosenessProbR()));
+//                Log.d("RESULTS", "SunglassesProb = " + Double.toString(finalFacialAttributeModel.getSunglassesProb()));
+//                Log.d("RESULTS", "Liveness loss = " + Double.toString(finalFacialAttributeModel.getLivenessLoss()));
+//                Log.d("RESULTS", "EyeClosenessL = " + Boolean.toString(finalFacialAttributeModel.getEyeClosenessL()));
+//                Log.d("RESULTS", "EyeClosenessR = " + Boolean.toString(finalFacialAttributeModel.getEyeClosenessR()));
+//                Log.d("RESULTS", "Sunglasses = " + Boolean.toString(finalFacialAttributeModel.getSunglasses()));
+//                Log.d("RESULTS", "Liveness = " + Boolean.toString(finalFacialAttributeModel.getLiveness()));
             }
         });
     }

@@ -61,6 +61,7 @@ public class FaceAttributeModel {
 
     // Open image from assets and return its bitmap
     public Bitmap openSampleImageAsBitMap() throws IOException {
+
         Bitmap bMap = BitmapFactory.decodeStream(context.getAssets().open("sample_image.jpg"));
 
         // Resize to 128 by 128
@@ -182,7 +183,7 @@ public class FaceAttributeModel {
 //        Tensor outputTensor4 = i.getOutputTensor(4);
 //        Tensor outputTensor5 = i.getOutputTensor(5);
 //        // input tensor information
-//        int [] inputShape = inputTensor.shape(); // 1, 2, 128, 128
+//        int [] inputShape = inputTensor.shape(); // 1, 3, 128, 128
 //        int inputHeight = inputShape[2];
 //        int inputWidth = inputShape[3];
 //        DataType type = inputTensor.dataType(); //FLOAT32
@@ -311,7 +312,7 @@ public class FaceAttributeModel {
     // Preprocess image, resize turn into bitmap then bytebuffer
     private ByteBuffer preprocessSampleImage() throws IOException {
         Bitmap resizedSampleImage = this.openSampleImageAsBitMap();
-        ByteBuffer input = ByteBuffer.allocateDirect(128 * 128 * 3 * 4);
+        ByteBuffer input = ByteBuffer.allocateDirect(128 * 128 * 3 * 4); // 128 width, 128 height, 3 channels, *4 for FLOAT
         input = bitmapToByteBuffer(resizedSampleImage);
         //input = this.getGrayScaleByteBuffer(resizedSampleImage);
         input.order(ByteOrder.nativeOrder());
